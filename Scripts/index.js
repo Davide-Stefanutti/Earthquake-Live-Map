@@ -94,7 +94,7 @@ function drawMap() {
     ctx.canvas.width = width;
     ctx.canvas.height = height;
     var mapImg = new Image();
-    mapImg.src = "Img/map.jpg";
+    mapImg.src = "Img/map.jpg"; //Image Source: https://en.wikipedia.org/wiki/Equirectangular_projection
     mapImg.onload = function () {
         ctx.drawImage(mapImg, 0, 0, width, height);
         getData();

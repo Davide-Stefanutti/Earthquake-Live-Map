@@ -6,14 +6,30 @@ Earthquake Live Map - Homework
 The project uses these libraries
 
 
-*[jQuery](https://jquery.com/)          npm install jquery
-                npm install @types/jquery
+* [jQuery](https://jquery.com/)
 
-*[MomentJS](https://momentjs.com/)       npm install moment
-                npm install @types/moment
+```
+npm install jquery
+npm install @types/jquery
+```
 
-*[UnderscoreJS](http://underscorejs.org/)    npm install underscore
-                npm install @types/underscore
+* [MomentJS](https://momentjs.com/)
 
-*[Bootstrap 3](http://getbootstrap.com/)     npm install boostrap@3
+```
+npm install moment
+npm install @types/moment
+```
+
+* [UnderscoreJS](http://underscorejs.org/)
+
+```
+npm install underscore
+npm install @types/underscore
+```
+
+* [Bootstrap 3](http://getbootstrap.com/)
+
+```
+npm install boostrap@3
+```
 

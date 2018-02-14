@@ -57,6 +57,7 @@ function drawData(quakes) {
         var quakeLat = quake.geometry.coordinates[1];
         var quakeTs = quake.properties.tsunami;
         var quakePlace = quake.properties.place;
+        var quakeTime = moment(quake.properties.time).format("dddd , DD-MM-YY , HH:mm:ss");
         var quakeAlert = quake.properties.alert;
         if (quakeAlert == null) {
             quakeAlert = "gray";
@@ -78,7 +79,7 @@ function drawData(quakes) {
         var textCol = $("<div></div>");
         textCol.addClass("col-xs-6");
         textCol.append("<br><h3> Location: " + quakePlace + "</h3>");
-        textCol.append("<p> Magnitude: " + quakeMag + "<br> Happened: " + timeAgo + "</p>");
+        textCol.append("<p> Magnitude: " + quakeMag + "<br> Happened: " + timeAgo + "<br> Time: " + quakeTime + "</p>");
         if (quakeTs == 1) {
             textCol.append("<p style='color:red'> <span class='glyphicon glyphicon-alert'> </span>  Tsunami risk!</p>");
         }

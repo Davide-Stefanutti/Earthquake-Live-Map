@@ -82,6 +82,7 @@ function drawData(quakes:features[]){
         let quakeLat = quake.geometry.coordinates[1];
         let quakeTs = quake.properties.tsunami;
         let quakePlace = quake.properties.place;
+        let quakeTime = moment(quake.properties.time).format("dddd , DD-MM-YY , HH:mm:ss");
 
         let quakeAlert = quake.properties.alert;
 
@@ -117,7 +118,7 @@ function drawData(quakes:features[]){
 
         textCol.addClass("col-xs-6");
         textCol.append("<br><h3> Location: "+ quakePlace + "</h3>");
-        textCol.append("<p> Magnitude: "+ quakeMag + "<br> Happened: "+  timeAgo  + "</p>")
+        textCol.append("<p> Magnitude: "+ quakeMag + "<br> Happened: "+  timeAgo  + "<br> Time: " + quakeTime + "</p>")
 
         if(quakeTs == 1){
             textCol.append("<p style='color:red'> <span class='glyphicon glyphicon-alert'> </span>  Tsunami risk!</p>");

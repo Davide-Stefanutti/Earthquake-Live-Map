@@ -30,6 +30,6 @@ npm install @types/underscore
 * [Bootstrap 3](http://getbootstrap.com/)
 
 ```
-npm install boostrap@3
+npm install bootstrap@3
 ```
 

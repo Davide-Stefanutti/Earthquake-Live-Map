@@ -109,9 +109,9 @@ function drawData(quakes:features[]){
         let imageUrl = "https://maps.googleapis.com/maps/api/staticmap?"+ "center="+quakeLat+","+quakeLon+"&zoom=5&size=300x200&maptype=hybrid&markers=colors:red|size:mid|"+ quakeLat+","+quakeLon +"&key="+API_KEY;
 
         if(selPer.val() != "hour")
-            imageCol.append("<img src='Img/temp.jpg'>");
+            imageCol.append("<img class='img-rounded img-responsive' src='Img/temp.jpg'>");
         else
-            imageCol.append("<img src='"+ imageUrl +"'>");
+            imageCol.append("<img class='img-rounded img-responsive' src='"+ imageUrl +"'>");
 
 
         let textCol = $("<div></div>");

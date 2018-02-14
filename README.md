@@ -5,7 +5,7 @@ Earthquake Live Map - Homework
 
 The project uses these libraries
 
-```
+
 *[jQuery](https://jquery.com/)          npm install jquery
                 npm install @types/jquery
 
@@ -17,4 +17,3 @@ The project uses these libraries
 
 *[Bootstrap 3](http://getbootstrap.com/)     npm install boostrap@3
 
-```

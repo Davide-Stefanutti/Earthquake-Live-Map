@@ -11,11 +11,16 @@ var selMag = $("#selectedMag");
 var selPer = $("#selectedPeriod");
 var sortby = $("#sortBy");
 var baseUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/";
+var quakes;
+var offsetMin = 0;
+var offsetSet = 10;
+var offsetMax = offsetSet;
+var currentPage = 0;
 $(function () {
-    drawMap();
+    drawMap(true);
 });
 update.on("click", function () {
-    drawMap();
+    drawMap(true);
 });
 function getData() {
     var url = baseUrl + selMag.val() + "_" + selPer.val() + ".geojson";
@@ -24,32 +29,34 @@ function getData() {
         type: "GET",
         dataType: "json"
     }).then(function (data) {
-        content.empty();
-        var quake;
         var sort = sortby.val();
         switch (sort) {
             case "mag_desc":
-                quake = _.sortBy(data.features, function (quake) { return quake.properties.mag; });
-                quake.reverse();
+                quakes = _.sortBy(data.features, function (quake) { return quake.properties.mag; });
+                quakes.reverse();
                 break;
             case "mag_asc":
-                quake = _.sortBy(data.features, function (quake) { return quake.properties.mag; });
+                quakes = _.sortBy(data.features, function (quake) { return quake.properties.mag; });
                 break;
             case "time_desc":
-                quake = _.sortBy(data.features, function (quake) { return quake.properties.time; });
+                quakes = _.sortBy(data.features, function (quake) { return quake.properties.time; });
                 break;
             case "time_asc":
-                quake = _.sortBy(data.features, function (quake) { return quake.properties.time; });
-                quake.reverse();
+                quakes = _.sortBy(data.features, function (quake) { return quake.properties.time; });
+                quakes.reverse();
                 break;
         }
-        drawData(quake);
+        currentPage = 0;
+        offsetMin = 0;
+        offsetMax = offsetSet;
+        drawData();
     }, function (jqXHR, textStatus, errorThrown) {
         alert("An error occurred!");
     });
 }
 setInterval(getData, 150000);
-function drawData(quakes) {
+function drawData() {
+    content.empty();
     content.append("<hr>");
     for (var i = 0; i < quakes.length; i++) {
         var quake = quakes[i];
@@ -67,38 +74,80 @@ function drawData(quakes) {
             quakeMag = 0.01;
         }
         var timeAgo = moment(quake.properties.time).fromNow();
-        var item = $("<div></div>");
-        item.addClass("row");
-        var imageCol = $("<div></div>");
-        imageCol.addClass("col-xs-4 col-xs-offset-1");
-        var imageUrl = "https://maps.googleapis.com/maps/api/staticmap?" + "center=" + quakeLat + "," + quakeLon + "&zoom=5&size=300x200&maptype=hybrid&markers=colors:red|size:mid|" + quakeLat + "," + quakeLon + "&key=" + API_KEY;
-        if (selPer.val() != "hour")
-            imageCol.append("<img class='img-rounded img-responsive' src='Img/temp.jpg'>");
-        else
+        if (i >= offsetMin && i < offsetMax) {
+            var item = $("<div></div>");
+            item.addClass("row");
+            var imageCol = $("<div></div>");
+            imageCol.addClass("col-xs-4 col-xs-offset-1");
+            var imageUrl = "https://maps.googleapis.com/maps/api/staticmap?" + "center=" + quakeLat + "," + quakeLon + "&zoom=5&size=300x200&maptype=hybrid&markers=colors:red|size:mid|" + quakeLat + "," + quakeLon + "&key=" + API_KEY;
+            /* Sample image can be removed with pagination
+            if (selPer.val() != "hour")
+                imageCol.append("<img class='img-rounded img-responsive' src='Img/temp.jpg'>");
+            else*/
             imageCol.append("<img class='img-rounded img-responsive' src='" + imageUrl + "'>");
-        var textCol = $("<div></div>");
-        textCol.addClass("col-xs-6");
-        textCol.append("<br><h3> Location: " + quakePlace + "</h3>");
-        textCol.append("<p> Magnitude: " + quakeMag + "<br> Happened: " + timeAgo + "<br> Time: " + quakeTime + "</p>");
-        if (quakeTs == 1) {
-            textCol.append("<p style='color:red'> <span class='glyphicon glyphicon-alert'> </span>  Tsunami risk!</p>");
+            var textCol = $("<div></div>");
+            textCol.addClass("col-xs-6");
+            textCol.append("<br><h3> Location: " + quakePlace + "</h3>");
+            textCol.append("<p> Magnitude: " + quakeMag + "<br> Happened: " + timeAgo + "<br> Time: " + quakeTime + "</p>");
+            if (quakeTs == 1) {
+                textCol.append("<p style='color:red'> <span class='glyphicon glyphicon-alert'> </span>  Tsunami risk!</p>");
+            }
+            item.append(imageCol);
+            item.append(textCol);
+            content.append(item);
+            content.append("<hr>");
+            drawCircle(convertLon(quakeLon), convertLat(quakeLat), quakeMag, quakeAlert, quakeTs);
         }
-        drawCircle(convertLon(quakeLon), convertLat(quakeLat), quakeMag, quakeAlert, quakeTs);
-        item.append(imageCol);
-        item.append(textCol);
-        content.append(item);
-        content.append("<hr>");
+        else {
+            drawCircle(convertLon(quakeLon), convertLat(quakeLat), quakeMag, quakeAlert, quakeTs);
+        }
     }
+    /* PAGINATION */
+    var pagContainer = $("<div> </div>");
+    pagContainer.addClass("text-center");
+    var pagination = $("<ul> </ul>");
+    pagination.addClass("pagination");
+    var pageN = Math.ceil(quakes.length / offsetSet);
+    var list = $("");
+    var index = currentPage - 5;
+    if (index < 0) {
+        index = 0;
+    }
+    else if (index > 0) {
+        pagination.append("<li><a href='#' onclick='changePage(0)'> \<\< </a></li>");
+    }
+    for (var i = index; i < pageN && i < currentPage + 5; i++) {
+        list = $("<li></li>");
+        if (i == currentPage) {
+            list.addClass("active");
+        }
+        list.append("<a href='#' onclick='changePage(" + i + ")'>" + (i + 1) + "</a>");
+        pagination.append(list);
+        if (i + 1 >= currentPage + 5 && (i + 1) < pageN) {
+            pagination.append("<li><a href='#' onclick='changePage(" + (pageN - 1) + ")'> \>\> </a></li>");
+        }
+    }
+    pagContainer.append(pagination);
+    content.append(pagContainer);
+}
+function changePage(page) {
+    currentPage = page;
+    offsetMin = offsetSet * (page);
+    offsetMax = offsetMin + offsetSet;
+    drawMap(false);
 }
 /* ____________________ */
-function drawMap() {
+function drawMap(updateData) {
     ctx.canvas.width = width;
     ctx.canvas.height = height;
     var mapImg = new Image();
     mapImg.src = "Img/map.jpg"; //Image Source: https://en.wikipedia.org/wiki/Equirectangular_projection
     mapImg.onload = function () {
         ctx.drawImage(mapImg, 0, 0, width, height);
-        getData();
+        if (updateData)
+            getData();
+        else
+            drawData();
     };
 }
 function convertLat(lat) {

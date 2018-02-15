@@ -1,6 +1,7 @@
 
 /* https://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php */
 
+
 let canvas:any = $("#globalMap")[0];
 let ctx = canvas.getContext('2d');
 
@@ -121,7 +122,7 @@ function drawData(){
                 imageCol.append("<img class='img-rounded img-responsive' src='Img/temp.jpg'>");
             else*/
 
-            imageCol.append("<img class='img-rounded img-responsive' src='" + imageUrl + "'>");
+            imageCol.append("<img style='cursor: pointer;' class='img-rounded img-responsive' onclick='openGoogleMaps("+ quakeLat +","+ quakeLon +")' src='" + imageUrl + "'>");
 
             let textCol = $("<div></div>");
 
@@ -182,6 +183,10 @@ function changePage(page){
     drawMap(false);
 }
 
+function openGoogleMaps(lat,lon){
+    window.open("http://maps.google.com/?t=k&q=loc:" + lat + ","+ lon +"&ll="+ lat + ","+ lon +"&z=14");
+}
+
 /* ____________________ */
 
 function drawMap(updateData:boolean){
@@ -222,9 +227,7 @@ function drawCircle(x:number,y:number,r:number,color:string,tusnami:number){
 }
 
 
-
 /* ____Interfaces______ */
-
 
 interface quakeData{
     metadata:any,

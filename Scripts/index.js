@@ -84,7 +84,7 @@ function drawData() {
             if (selPer.val() != "hour")
                 imageCol.append("<img class='img-rounded img-responsive' src='Img/temp.jpg'>");
             else*/
-            imageCol.append("<img class='img-rounded img-responsive' src='" + imageUrl + "'>");
+            imageCol.append("<img style='cursor: pointer;' class='img-rounded img-responsive' onclick='openGoogleMaps(" + quakeLat + "," + quakeLon + ")' src='" + imageUrl + "'>");
             var textCol = $("<div></div>");
             textCol.addClass("col-xs-6");
             textCol.append("<br><h3> Location: " + quakePlace + "</h3>");
@@ -135,6 +135,9 @@ function changePage(page) {
     offsetMin = offsetSet * (page);
     offsetMax = offsetMin + offsetSet;
     drawMap(false);
+}
+function openGoogleMaps(lat, lon) {
+    window.open("http://maps.google.com/?t=k&q=loc:" + lat + "," + lon + "&ll=" + lat + "," + lon + "&z=14");
 }
 /* ____________________ */
 function drawMap(updateData) {

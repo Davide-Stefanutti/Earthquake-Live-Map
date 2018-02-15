@@ -1,9 +1,9 @@
-# Earthquake-Live-Map
+# Earthquake Live Map
 Earthquake Live Map - Homework
 
 ### Libraries
 
-The project uses these libraries
+This project uses these libraries
 
 
 * [jQuery](https://jquery.com/)
